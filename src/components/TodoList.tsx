@@ -1,33 +1,19 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabaseClient } from "../../lib/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteFromSupa, getTodos, insertTodoToSupa, updateTodoFromSupa } from "../../lib/actions";
 import { useState, useEffect } from "react";
 
 import SingleTodo from "./SingleTodo";
 import EditForm from "./EditForm";
 
 interface OrganicTodoProps {
-  id: number,
+  id?: number,
   title: string,
   description: string,
   isComplete: boolean,
   insertedat: any,
   tags: string[]
-}
-
-async function getTodos() {
-  const data = await supabaseClient
-    .from("todos")
-    .select("*")
-    .order("id", { ascending: true })
-    .then(({ data, error }) => {
-      if (!error) {
-        return data
-      }
-    });
-
-  return data;
 }
 
 export default function ShowList() {
@@ -77,6 +63,8 @@ export default function ShowList() {
     })
   }, [data]);
 
+  const insertNewTodoMutation = useMutation(insertTodoToSupa)
+
   const handleAdd = (e: any, newTodo: any, isComplete: boolean) => {
 
     const todos: OrganicTodoProps[] | undefined = queryClient.getQueryData(queryKey);
@@ -100,6 +88,10 @@ export default function ShowList() {
     queryClient.setQueryData(queryKey, [...updatedTodos]);
 
     setShowAddTodoFormFlag(false);
+
+    delete organicTodo.id;
+
+    insertNewTodoMutation.mutate(organicTodo);
   }
 
   const handleClose = (e: any) => {
@@ -151,6 +143,8 @@ export default function ShowList() {
 
   }
 
+  const deleteMutation = useMutation(deleteFromSupa);
+
   const handleRemove = () => {
 
     const todos: any = queryClient.getQueryData(queryKey);
@@ -165,6 +159,8 @@ export default function ShowList() {
 
       if (selectedFlagArray[i]) {
 
+        deleteMutation.mutate(updatedTodos[i - splicedCount].id);
+
         updatedTodos.splice((i - splicedCount), 1);
 
         splicedCount++;
@@ -175,6 +171,8 @@ export default function ShowList() {
     queryClient.setQueryData(queryKey, updatedTodos);
 
   }
+
+  const completeMutation = useMutation(updateTodoFromSupa);
 
   const handleComplete = () => {
 
@@ -189,6 +187,8 @@ export default function ShowList() {
       if (selectedFlagArray[i]) {
 
         updatedTodos[i].isComplete = true;
+
+        completeMutation.mutate(updatedTodos[i]);
 
       }
 

@@ -1,8 +1,9 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import moment from "moment";
 import { motion } from "framer-motion"
 
+import { deleteFromSupa, updateTodoFromSupa } from "../../lib/actions";
 import EditForm from "./EditForm";
 
 interface SingleTodoComponentProps {
@@ -27,6 +28,8 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
 
   const queryKey = ["hydrate-todos"];
 
+  const deleteMutation = useMutation(deleteFromSupa);
+  
   const deleteTodo = (id: number) => {
 
     const todos: any = queryClient.getQueryData(queryKey);
@@ -37,13 +40,19 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
 
     setShowEditFormFlag(false);
 
+    deleteMutation.mutate(id);
+
   }
+
+  const updateMutation = useMutation(updateTodoFromSupa);
 
   const handleUpdate = (e: any, updatedTodo: any, isComplete: boolean) => {
 
     const todos: any = queryClient.getQueryData(queryKey);
 
     const { title, description, tags } = updatedTodo;
+
+    const newTodo = { id, title, description, tags, isComplete };
 
     const newTodos = todos.map((item: any) => {
 
@@ -66,6 +75,8 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
     queryClient.setQueryData(queryKey, newTodos);
 
     setShowEditFormFlag(false);
+
+    updateMutation.mutate(newTodo);
 
   }
 
