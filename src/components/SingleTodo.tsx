@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import moment from "moment";
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 import EditForm from "./EditForm";
 
@@ -18,25 +18,37 @@ interface SingleTodoComponentProps {
 }
 
 const SingleTodo = (props: SingleTodoComponentProps) => {
+
   const { id, title, description, isComplete, insertedat, tags } = props;
+
   const [showEditFormFlag, setShowEditFormFlag] = useState(false);
 
   const queryClient = useQueryClient();
+
   const queryKey = ["hydrate-todos"];
 
   const deleteTodo = (id: number) => {
+
     const todos: any = queryClient.getQueryData(queryKey);
+
     const updatedTodos = todos.filter((item: any) => item.id !== id);
+
     queryClient.setQueriesData(queryKey, updatedTodos);
+
     setShowEditFormFlag(false);
+
   }
 
   const handleUpdate = (e: any, updatedTodo: any, isComplete: boolean) => {
 
     const todos: any = queryClient.getQueryData(queryKey);
+
     const { title, description, tags } = updatedTodo;
+
     const newTodos = todos.map((item: any) => {
+
       if (item.id === id) {
+
         return {
           ...item,
           title,
@@ -44,11 +56,17 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
           isComplete,
           tags
         }
+
       }
+
       return item;
+
     })
+
     queryClient.setQueryData(queryKey, newTodos);
+
     setShowEditFormFlag(false);
+
   }
 
   const handleClose = (e: any) => {
@@ -58,6 +76,7 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
   }
 
   return (
+
     <div className="flex flex-col gap-1">
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
@@ -77,14 +96,29 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
           <div>
             <h2 className="text-lg font-bold text-slate-900">{title}
               <span>(</span>
-              {tags.map((item, index, array) => (
-                <span className="text-sm font-normal" key={index}>{item}{index !== array.length - 1 && ","}</span>
-              ))}
+
+              {
+                tags.map((item, index, array) => (
+
+                <span 
+                  className="text-sm font-normal" 
+                  key={index}
+                >
+                  {item}{index !== array.length - 1 && ","}
+                </span>
+
+                ))
+              }
+
               <span>)</span>
             </h2>
           </div>
-          <div className=" rounded-lg">{description}</div>
-          <div>{moment(insertedat).format('MMM Do YYYY')}</div>
+          <div className=" rounded-lg">
+            {description}
+          </div>
+          <div>
+            {moment(insertedat).format('MMM Do YYYY')}
+          </div>
           <div className="w-3/4 h-6 m-auto grid grid-cols-2 gap-10">
             <motion.button
               className=" bg-cyan-500 shadow-lg rounded-lg"
@@ -115,11 +149,13 @@ const SingleTodo = (props: SingleTodoComponentProps) => {
           </div>
         </div>
       </motion.div>
+
       {
         showEditFormFlag && <EditForm {...props} handleUpdate={handleUpdate} handleClose={handleClose} />
       }
+
     </div>
-  )
+  );
 }
 
 export default SingleTodo

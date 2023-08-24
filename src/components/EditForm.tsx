@@ -94,7 +94,8 @@ const EditForm = (props: SingleTodoComponentProps) => {
             </button>
             <label
               className="text-slate-500"
-            >Title
+            >
+              Title
               <span className="text-red-500"> *</span>
             </label>
             <input
@@ -104,15 +105,17 @@ const EditForm = (props: SingleTodoComponentProps) => {
               onChange={(e) => handleInputChange(e)}
               className="block outline-none w-full border border-slate-900 rounded-md focus:border-blue-900 focus:border-2"
             />
-            {errors.title && (
-              <p className="text-xs italic text-red-500 mt-2"> {errors.title?.message}
-              </p>
-            )}
+            {
+              errors.title && (
+                <p className="text-xs italic text-red-500 mt-2"> {errors.title?.message}</p>
+              )
+            }
           </div>
           <div>
             <label
               className="text-slate-500"
-            >Description
+            >
+              Description
               <span className="text-red-500"> *</span>
             </label>
             <textarea
@@ -121,10 +124,11 @@ const EditForm = (props: SingleTodoComponentProps) => {
               onChange={(e) => handleInputChange(e)}
               className="block outline-none w-full border border-slate-900 rounded-md focus:border-blue-900 focus:border-2"
             />
-            {errors.description && (
-              <p className="text-xs italic text-red-500 mt-2"> {errors.description?.message}
-              </p>
-            )}
+            {
+              errors.description && (
+                <p className="text-xs italic text-red-500 mt-2"> {errors.description?.message}</p>
+              )
+            }
           </div>
           <div className=" flex flex-row items-center">
             <button
@@ -160,18 +164,27 @@ const EditForm = (props: SingleTodoComponentProps) => {
                     name={`tag${index}`}
                     value={inputValues.tags[index]}
                     onChange={(e) => {
+
                       const { name, value } = e.currentTarget;
+
                       const tagIndex = Number(name.slice(3));
+
                       setInputValues((prev: any) => {
+
                         let newTags = prev.tags;
+
                         newTags[tagIndex] = value;
+
                         return {
                           ...prev,
                           tags: newTags
                         }
+
                       })
+
                       handleInputChange(e)
                     }}
+
                     className="block pr-5 outline-none w-full border border-slate-900 rounded-md focus:border-blue-900 focus:border-2"
                   />
                   <button
@@ -181,7 +194,8 @@ const EditForm = (props: SingleTodoComponentProps) => {
                     -
                   </button>
                 </div>
-              ))}
+              ))
+            }
           </div>
           <div className="flex flex-row gap-4">
             <button

@@ -1,8 +1,9 @@
 import getQueryClient from "@/utils/getQueryClient";
 import Hydrate from "@/utils/hydrate.client";
 import { dehydrate } from "@tanstack/query-core";
-import TodoList from "./TodoList";
 import { supabaseClient } from "../../lib/client";
+
+import TodoList from "./TodoList";
 
 async function getTodos() {
   const data = await supabaseClient
@@ -19,8 +20,11 @@ async function getTodos() {
 }
 
 export default function PreShowList() {
+
   const queryClient = getQueryClient();
+
   queryClient.prefetchQuery(["hydrate-todos"], getTodos);
+  
   const dehydratedState = dehydrate(queryClient);
 
   return (
